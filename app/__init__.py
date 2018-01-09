@@ -85,6 +85,8 @@ def create_app(config_name):
                 'date_created': bucketlist.date_created,
                 'date_modified': bucketlist.date_modified
             })
+            response.status_code = 200
+            return response
         
     return app
     
