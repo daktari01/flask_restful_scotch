@@ -40,6 +40,7 @@ class Bucketlist(db.Model):
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(),
                 onupdate=db.func.current_timestamp())
+    created_by = db.Column(db.Integer, db.ForeignKey(User.id))
 
     def __init__(self,name):
         """Initialize with name"""
@@ -50,8 +51,8 @@ class Bucketlist(db.Model):
         db.session.commit()
 
     @staticmethod
-    def get_all():
-        return Bucketlist.query.all()
+    def get_all(user_id):
+        return Bucketlist.query.filter_by(created_by=user_id)
 
     def delete(self):
         db.session.delete(self)
