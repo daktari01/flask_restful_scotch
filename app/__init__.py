@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
 
 
+
 # local import
 from instance.config import app_config
 
@@ -37,7 +38,7 @@ def create_app(config_name):
                 return response
         else:
             # method is GET
-            bucketlists = Bucketlist.get_all()
+            bucketlists = Bucketlist.query.filter_by(created_by=user_id)
             results = []
 
             for bucketlist in bucketlists:
