@@ -97,6 +97,3 @@ class Bucketlist(db.Model):
     def __repr__(self):
         return "<Bucketlist: {}>".format(self.name)
 
-
-    
-    
