@@ -1,19 +1,22 @@
+# /app/auth/views.py
+
 from . import auth_blueprint
 
 from flask.views import MethodView
 from flask import make_response, request, jsonify
-from app.models import User 
+from app.models import User
 
 class RegistrationView(MethodView):
-    """Class to register new user"""
+    """This class registers a new user."""
+
     def post(self):
-        """Handle POST request for this view. Url => /auth/register"""
-        
-        # Query to see if user already exists
+        """Handle POST request for this view. Url ---> /auth/register"""
+
+        # Query to see if the user already exists
         user = User.query.filter_by(email=request.data['email']).first()
-        
+
         if not user:
-            # There is no user, so try registering
+            # There is no user so we'll try to register them
             try:
                 post_data = request.data
                 # Register the user
@@ -21,31 +24,32 @@ class RegistrationView(MethodView):
                 password = post_data['password']
                 user = User(email=email, password=password)
                 user.save()
-                
+
                 response = {
-                    'message': 'You registered successfully. Please log in'
+                    'message': 'You registered successfully. Please log in.'
                 }
-                # return a response to notify the user of the successful registration
-                return make_response(jsonify(response)), 201
+                # return a response notifying the user that they registered successfully
+                print(response)
+                return make_response(response), 201
             except Exception as e:
-                # Return a string message containing the occurred error
+                # An error occured, therefore return a string message containing the error
                 response = {
                     'message': str(e)
                 }
-                return make_response(jsonify(response)), 401
+                return make_response(response), 401
         else:
-            # Return a message saying that the user already exists
+            # There is an existing user. We don't want to register users twice
+            # Return a message to the user telling them that they they already exist
             response = {
-                'message': 'User already exists. Please login'
+                'message': 'User already exists. Please login.'
             }
-            return make_response(jsonify(response)), 202
-            
-registration_view = RegistrationView('register_view')
-# Define the rule for the registration. url => /auth/register
-# Add the rule to blueprint
-auth_blueprint.add_rule(
+
+            return make_response(response), 202
+
+registration_view = RegistrationView.as_view('register_view')
+# Define the rule for the registration url --->  /auth/register
+# Then add the rule to the blueprint
+auth_blueprint.add_url_rule(
     '/auth/register',
     view_func=registration_view,
     methods=['POST'])
-
-    
