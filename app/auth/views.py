@@ -46,10 +46,47 @@ class RegistrationView(MethodView):
 
             return make_response(response), 202
 
-registration_view = RegistrationView.as_view('register_view')
-# Define the rule for the registration url --->  /auth/register
+class LoginView(MethodView):
+    """This class based view handles user login and token access generation"""
+    def post(self):
+        """Handle post requests for this view. Url => /auth/login"""
+        try:
+            # Get the user object using their email (unique to every user)
+            user = User.query.filter_by(email=request.data['email']).first()
+
+            # Try to authenticate the found user using their password
+            if user and user.password_is_valid(request.data['password']):
+                # Generate the access token which will ne used as the authorization header
+                access_token = user.generate_token(user.id)
+                if access_token:
+                    response = {
+                        'message': 'You logged in successfully',
+                        'access_token': access_token.decode()
+                    }
+                    return make_response(jsonify(response)), 200
+            else:
+                # User does not exist, return an error message
+                response = {
+                    'message': 'Invalid email or password. Please try again'
+                }
+                # Return a server error using a HTTP error_code 500 (Internal server error)
+                return make_response(jsonify(response)), 500
+
+# Define the API resource
+registration_view = RegistrationView.as_view('registration_view')
+login_view = LoginView.as_view(login_view)
+
+# Define the rule for the registration: url --->  /auth/register
 # Then add the rule to the blueprint
 auth_blueprint.add_url_rule(
     '/auth/register',
     view_func=registration_view,
     methods=['POST'])
+
+# Define the rule for the login: url ---> /auth/login
+# THen add the rule to the blueprint
+auth_blueprint.add_url_rule(
+    '/auth/login',
+    view_func=login_view,
+    methods=['POST']
+)
