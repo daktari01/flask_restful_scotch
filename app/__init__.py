@@ -21,7 +21,7 @@ def create_app(config_name):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
-    @app.route('/bucketlists/', methods=['POST', 'GET'])
+    @app.route('/bucketlists/<int:id>', methods=['POST', 'GET'])
     def bucketlists():
         if request.method == "POST":
             name = str(request.data.get('name', ''))

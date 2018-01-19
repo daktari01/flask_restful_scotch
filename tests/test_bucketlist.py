@@ -19,6 +19,22 @@ class BucketlistTestCase(unittest.TestCase):
             # create all tables
             db.create_all()
 
+    def register_user(self, email="user@example.com", password="test1234"):
+        """Helper method to register a test user"""
+        user_data = {
+            'email': email,
+            'password': password
+        }
+        return self.client().post('/auth/register', data=user_data)
+
+    def login_user(self, email="user@example.com", password="test1234"):
+        """Helper method to login a test user"""
+        user_data = {
+            'email': email,
+            'password': password
+        }
+        return self.client().post('/auth/login', data=user_data)
+
     def test_bucketlist_creation(self):
         """Test API can create a bucketlist (POST request)"""
         res = self.client().post('/bucketlists/', data=self.bucketlist)
