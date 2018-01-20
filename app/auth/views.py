@@ -71,10 +71,17 @@ class LoginView(MethodView):
                 }
                 # Return a server error using a HTTP error_code 500 (Internal server error)
                 return make_response(jsonify(response)), 500
+        except Exception as e:
+            # Create a response containing an string error message
+            response = {
+                'message': str(e)
+            }
+            # Return a server error using the HTTP Error Code 500 (Internal Server Error)
+            return make_response(jsonify(response)), 500
 
 # Define the API resource
 registration_view = RegistrationView.as_view('registration_view')
-login_view = LoginView.as_view(login_view)
+login_view = LoginView.as_view('login_view')
 
 # Define the rule for the registration: url --->  /auth/register
 # Then add the rule to the blueprint
@@ -84,7 +91,7 @@ auth_blueprint.add_url_rule(
     methods=['POST'])
 
 # Define the rule for the login: url ---> /auth/login
-# THen add the rule to the blueprint
+# Then add the rule to the blueprint
 auth_blueprint.add_url_rule(
     '/auth/login',
     view_func=login_view,

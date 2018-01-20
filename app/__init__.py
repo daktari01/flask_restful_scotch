@@ -15,7 +15,7 @@ db = SQLAlchemy()
 from app.models import Bucketlist
 
 def create_app(config_name):
-    from models import Bucketlist, User
+    from .models import Bucketlist, User
 
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
@@ -134,7 +134,7 @@ def create_app(config_name):
     # Import the authentication blueprint and register it on the app
     from .auth import auth_blueprint
     app.register_blueprint(auth_blueprint)
-    
+
     return app
     
     
